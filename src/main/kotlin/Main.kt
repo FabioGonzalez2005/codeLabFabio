@@ -32,48 +32,7 @@ fun App() {
     }
 }
 
-@Composable
-fun pantalla2() {
-    val textos = arrayOf(
-        "At vero eos et accusamus et iusto odio dignissimos",
-        "Sed ut perspiciatis unde omnis iste natus error sit voluptatem",
-        "Hola Fabio",
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod"
-    )
-    Column(
-        modifier = Modifier.fillMaxSize().padding(10.dp),
-    )
-    {
-        textos.forEach { texto ->
-            var expanded by remember { mutableStateOf(false)}
-            var actualPadding by remember { mutableStateOf(0)}
-            var text by remember { mutableStateOf("Show More!") }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth().background(color = Color.LightGray).padding(10.dp).padding(bottom = actualPadding.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            )
-            {
-                Text("$texto")
-                Button(onClick = {
-                    expanded = !expanded
-                    if (expanded) {
-                        actualPadding = 40
-                        text = "Show Less!"
-                    }
-                    else  {
-                        actualPadding = 0
-                        text = "Show More!"
-                    }
-                }) {
-                    Text(text)
-                }
-            }
-            Spacer(modifier = Modifier.padding(15.dp))
-        }
-    }
-}
+
 
 @Composable
 fun pantalla1(mostrarPantalla: () -> Unit) {
