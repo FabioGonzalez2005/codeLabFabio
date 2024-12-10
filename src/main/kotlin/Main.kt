@@ -1,18 +1,17 @@
-import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
@@ -20,12 +19,11 @@ import androidx.compose.ui.window.application
 @Composable
 fun App() {
     MaterialTheme {
-        Surface{
+        Surface {
             var happypepe by remember { mutableStateOf(true) }
             if (happypepe) {
-                pantalla1(mostrarPantalla =  {happypepe = false})
-            }
-            else {
+                pantalla1(mostrarPantalla = { happypepe = false })
+            } else {
                 pantalla2()
             }
         }
@@ -42,30 +40,32 @@ fun pantalla2() {
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod"
     )
     Column(
-        modifier = Modifier.fillMaxSize().padding(10.dp),
-    )
-    {
+        modifier = Modifier.fillMaxSize().padding(10.dp)
+    ) {
         textos.forEach { texto ->
-            var expanded by remember { mutableStateOf(false)}
-            var actualPadding by remember { mutableStateOf(0)}
+            var expanded by remember { mutableStateOf(false) }
+            val animationPadding by animateDpAsState(
+                if (expanded) 48.dp else 0.dp,
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                    stiffness = Spring.StiffnessLow
+                )
+            )
+            var currentPadding = animationPadding.coerceAtLeast(0.dp)
             var text by remember { mutableStateOf("Show More!") }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth().background(color = Color.LightGray).padding(10.dp).padding(bottom = actualPadding.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(color = Color.LightGray)
+                    .padding(10.dp)
+                    .padding(bottom = currentPadding),
                 horizontalArrangement = Arrangement.SpaceBetween
-            )
-            {
-                Text("$texto")
+            ) {
+                Text(texto)
                 Button(onClick = {
                     expanded = !expanded
-                    if (expanded) {
-                        actualPadding = 40
-                        text = "Show Less!"
-                    }
-                    else  {
-                        actualPadding = 0
-                        text = "Show More!"
-                    }
+                    text = if (expanded) "Show Less!" else "Show More!"
                 }) {
                     Text(text)
                 }
@@ -77,12 +77,11 @@ fun pantalla2() {
 
 @Composable
 fun pantalla1(mostrarPantalla: () -> Unit) {
-    Column (
+    Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
-    )
-    {
+    ) {
         Text("Bienvenido al mundo de Fabio")
         MaterialTheme {
             Button(onClick = mostrarPantalla) {
